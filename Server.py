@@ -73,9 +73,9 @@ def Insert_values(table_name:str, date_and_time:str, int_val_message_status:int)
 """
 Show service status graphically
 """
-def Visualize_data(message_status:int, date_and_time:str):   
+def Visualize_data(int_val_message_status:int, date_and_time:str):   
     Values_msg = np.array([]) 
-    Values_msg = np.append(Values_msg, message_status)
+    Values_msg = np.append(Values_msg, int_val_message_status)
 
     date_and_time_output   = re.findall("..:.*", date_and_time)
     final_result_date_time =  ''.join(date_and_time_output)
@@ -87,6 +87,7 @@ def Visualize_data(message_status:int, date_and_time:str):
     plt.title("Status Pacemaker Service")
     plt.xlabel('Date and time')
     plt.ylabel('Status')
+    
 
 #-----------------------------------------------------------------------------------------
 """
@@ -104,10 +105,10 @@ def Send_email(date_and_time:str):
     msg['To']      = 'amirtestone@gmail.com'
     msg.set_content('Pacemaker service is down at this time: {} '.format(date_and_time))
 
-    with open('resolve.txt', 'r') as f:
+    with open('help.png', 'rb') as f:
         file_data = f.read()
 
-    msg.add_attachment(file_data, subtype = 'txt', filename = 'resolve.txt')
+    msg.add_attachment(file_data, maintype = 'image', subtype = 'png', filename = 'help.png')
 
     with smtplib.SMTP_SSL(EMAIL_HOST, EMAIL_PORT_SSL) as server:
         server.login(EMAIL_HOST_USER, EMAIL_HOST_PASSWORD)
@@ -121,48 +122,63 @@ def Create_log():
     logging.basicConfig(filename = 'msg.log', filemode = 'a', 
     format = '%(asctime)s-%(filename)s-%(message)s')
     
-    logging.error('Pacemaker service is down !!')
+    logging.error('[-] Pacemaker service is down !!')
 
 #-----------------------------------------------------------------------------------------
 """
 Get values form target node
 """
 def Get_values():
-    for count in range(0,5,1):
-        date_and_time  = target.recv(1024).decode('utf-8') 
-        message_status = target.recv(1024).decode('utf-8')
+    
+    for count in range(0,10,1):
 
+        date_and_time  = target.recv(1024).decode('utf-8').strip() 
+        message_status = target.recv(1024).decode('utf-8').strip()
+
+        
+
+        #Change the message_status variable from string to integer
         int_val_message_status = int(message_status)
 
-        print(f">>> Date And Time: { date_and_time }")
-        print(f">>> Status Service Pacemaker: { int_val_message_status }")
         
+        print(f"\n>>> Date And Time: { date_and_time }")
+        print(f"\n>>> Status Service Pacemaker: { int_val_message_status }")
+        
+
         #Execution of the function of pouring values into MySQL
         P1 = Process(target = Insert_values, args = (table_name, date_and_time, int_val_message_status,))
         P1.start()
         P1.join()
         
+
         #Execute function visualize data
         # P2 = Process(target = Visualize_data, args = (message_status,))
         # P2.start()
         # P2.join()
 
-        Visualize_data(message_status, date_and_time)
+
+        Visualize_data(int_val_message_status, date_and_time)
 
 
         if int_val_message_status == 1:
+        
             print(colored(f"\n[+] Service Is Up And Running :)", 'green'))
+        
         else:
+
             print(colored(f"\n[-] Service Is Down :(", 'red'))
 
             #Execute function send mail
-            # P3 = Process(target = Send_email, args = (date_and_time,))
-            # P3.start()
-            # P3.join()
+            P_send_mail = Process(target = Send_email, args = (date_and_time,))
 
-            P4 = Process(target = Create_log)
-            P4.start()
-            P4.join()
+            #Execute log creation function
+            P_create_log = Process(target = Create_log)
+
+            P_send_mail.start()
+            P_create_log.start()
+
+            P_send_mail.join()
+            P_create_log.join()
 
 
         print('\n*********************************************')
@@ -180,15 +196,18 @@ def Server():
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        s.bind(("192.168.60.1", 54321))
+        s.bind(("192.168.62.1", 54321))
         s.listen(5)
         print(colored("[+] Listening For Incoming Connections", 'green'))
 
         target, ip = s.accept()
         print(colored("[+] Connection Established From: %s" % str(ip), 'blue'))
 
+        print('\n---------------------------------------------')
+
+
     except Exception as err:
-        print("[-] I Can Not Listening For Incoming Connections !! :(", str(err))  
+        print(colored("[-] I Can Not Listening For Incoming Connections !! :( %s" % str(err), 'red'))  
         exit()
 
 #-----------------------------------------------------------------------------------------
@@ -207,6 +226,8 @@ plt.show()
 
 
 s.close()
+
+
 
 
 
