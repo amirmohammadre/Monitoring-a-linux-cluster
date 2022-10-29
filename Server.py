@@ -21,18 +21,27 @@ import re
 import os
 
 
+#Change plot size in Matplotlib
+plt.rcParams['figure.figsize'] = (12, 7)
+
+
 #-----------------------------------------------------------------------------------------
 """
 establishing the connection
 """
 def Connect_to_mysql():
+
     try:
+   
         global cnx
         cnx = mysql.connector.connect(user = 'root', password = 'a1800', host = '127.0.0.1')
+   
     except Exception as err:
         print("[-] I Can Not Connect To MySQL Database !! :(", str(err))  
         exit()
+   
     else:    
+   
         global cursor
         cursor = cnx.cursor()
         
@@ -41,6 +50,7 @@ def Connect_to_mysql():
 Create a database to store the values taken
 """
 def Create_database():
+
     database_name = "Pacemaker"
 
     cursor.execute("CREATE DATABASE IF NOT EXISTS {}".format(database_name))
@@ -51,6 +61,7 @@ def Create_database():
 Create a table in the database
 """
 def Create_table() -> str:  
+
     table_name = "Status"
 
     sql = """CREATE TABLE IF NOT EXISTS %s (ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -64,6 +75,7 @@ def Create_table() -> str:
 Insert the values into the MySQL database
 """
 def Insert_values(table_name:str, date_and_time:str, int_val_message_status:int):
+
     cursor.execute("INSERT INTO {} (Date_And_Time, Status) VALUES (\"%s\", \"%s\")".format(table_name) 
     % (date_and_time, int_val_message_status))
     
@@ -74,6 +86,7 @@ def Insert_values(table_name:str, date_and_time:str, int_val_message_status:int)
 Show service status graphically
 """
 def Visualize_data(int_val_message_status:int, date_and_time:str):   
+
     Values_msg = np.array([]) 
     Values_msg = np.append(Values_msg, int_val_message_status)
 
@@ -82,6 +95,7 @@ def Visualize_data(int_val_message_status:int, date_and_time:str):
 
     Values_date_time = np.array([])
     Values_date_time = np.append(Values_date_time, final_result_date_time)
+
 
     plt.bar(Values_date_time, Values_msg, label = "Status")
     plt.title("Status Pacemaker Service")
@@ -94,10 +108,12 @@ def Visualize_data(int_val_message_status:int, date_and_time:str):
 Send email if the service is interrupted
 """
 def Send_email(date_and_time:str):
+
     EMAIL_HOST          = 'smtp.gmail.com'
     EMAIL_HOST_USER     = 'amirmohammadrezvaninia@gmail.com'
     EMAIL_HOST_PASSWORD = 'mbtzvraxgoamjuof'
     EMAIL_PORT_SSL      = 465
+
 
     msg = EmailMessage()
     msg['Subject'] = 'Monitoring Cluster Linux => Severity: High'
@@ -105,10 +121,13 @@ def Send_email(date_and_time:str):
     msg['To']      = 'amirtestone@gmail.com'
     msg.set_content('Pacemaker service is down at this time: {} '.format(date_and_time))
 
+
     with open('help.png', 'rb') as f:
         file_data = f.read()
 
+
     msg.add_attachment(file_data, maintype = 'image', subtype = 'png', filename = 'help.png')
+
 
     with smtplib.SMTP_SSL(EMAIL_HOST, EMAIL_PORT_SSL) as server:
         server.login(EMAIL_HOST_USER, EMAIL_HOST_PASSWORD)
@@ -119,6 +138,7 @@ def Send_email(date_and_time:str):
 Create a log to review events
 """
 def Create_log():
+ 
     logging.basicConfig(filename = 'msg.log', filemode = 'a', 
     format = '%(asctime)s-%(filename)s-%(message)s')
     
@@ -134,7 +154,7 @@ def Get_values():
 
         date_and_time  = target.recv(1024).decode('utf-8').strip() 
         message_status = target.recv(1024).decode('utf-8').strip()
-
+        
         
 
         #Change the message_status variable from string to integer
@@ -143,6 +163,7 @@ def Get_values():
         
         print(f"\n>>> Date And Time: { date_and_time }")
         print(f"\n>>> Status Service Pacemaker: { int_val_message_status }")
+
         
 
         #Execution of the function of pouring values into MySQL
@@ -181,32 +202,35 @@ def Get_values():
             P_create_log.join()
 
 
-        print('\n*********************************************')
+        print('\n*******************************************************')
 
 #-----------------------------------------------------------------------------------------
 """
 This function for listening incoming connections and established connections created
 """
 def Server():
+
     #Variables used in established connections
     global s
     global ip
     global target
 
     try:
+    
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind(("192.168.62.1", 54321))
-        s.listen(5)
+        s.listen(7)
         print(colored("[+] Listening For Incoming Connections", 'green'))
 
         target, ip = s.accept()
         print(colored("[+] Connection Established From: %s" % str(ip), 'blue'))
 
-        print('\n---------------------------------------------')
+        print('\n-------------------------------------------------------')
 
 
     except Exception as err:
+    
         print(colored("[-] I Can Not Listening For Incoming Connections !! :( %s" % str(err), 'red'))  
         exit()
 
