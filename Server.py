@@ -7,6 +7,7 @@
 """
 Import libraries
 """
+from turtle import color
 from termcolor import colored
 from email.message import EmailMessage
 from multiprocessing import Process
@@ -98,6 +99,9 @@ def Visualize_data(int_val_message_status:int, date_and_time:str):
 
 
     plt.bar(Values_date_time, Values_msg, label = "Status")
+    plt.scatter(Values_date_time, Values_msg)
+
+
     plt.title("Status Pacemaker Service")
     plt.xlabel('Date and time')
     plt.ylabel('Status')
