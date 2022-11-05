@@ -152,6 +152,21 @@ log.configure(width = 850, height = 340, border_width = 1, border_color = '#8080
 
 
 
+
+# create CTk scrollbar
+ctk_textbox_scrollbar = customtkinter.CTkScrollbar(text_frame, command=log.yview)
+ctk_textbox_scrollbar.grid(row=0, column=1, sticky="ns")
+
+ctk_textbox_scrollbar.configure(corner_radius = 20)
+
+
+# connect textbox scroll event to CTk scrollbar
+log.configure(yscrollcommand=ctk_textbox_scrollbar.set)
+
+
+
+
+
 #-----------------------------------------------------------------------------------------
 """
 establishing the connection with MySQL Database
