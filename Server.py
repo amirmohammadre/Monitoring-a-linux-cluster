@@ -7,7 +7,6 @@
 """
 Import libraries
 """
-from turtle import color
 from termcolor import colored
 from email.message import EmailMessage
 from multiprocessing import Process
@@ -24,11 +23,17 @@ import smtplib
 import re
 import os
 
+
+from pylab import plot, show, xlabel, ylabel
+
+
+
 #-----------------------------------------------------------------------------------------
 
 
 #Change plot size in Matplotlib
 plt.rcParams['figure.figsize'] = (12, 7)
+
 
 #-----------------------------------------------------------------------------------------
 
@@ -36,19 +41,31 @@ plt.rcParams['figure.figsize'] = (12, 7)
 customtkinter.set_appearance_mode("System")  
 customtkinter.set_default_color_theme("blue")  
 
+
 app = customtkinter.CTk()  
 app.geometry("1000x600")
 app.title("Monitoring Status Pacemaker Service")
 app.resizable(False, False)
 
 
-label_frame = customtkinter.CTkFrame(master = app, 
-                                    border_width = 0.5, border_color = '#FFFFFF',
-                                    width= 900)
-
-label_frame.pack(pady=30)
-
 #-----------------------------------------------------------------------------------------
+
+
+
+
+def Display_graph():
+
+    # window = customtkinter.CTkToplevel()
+    # window.geometry("800x500")
+    # window.set_appearance_mode("light")
+
+    plt.show()
+
+    
+
+
+
+
 
 
 def button_event():
@@ -66,59 +83,44 @@ def button_event():
 
     table_name = Create_table()
 
-
-    # Pro_Server = Process(target = Server, args = (inputValue_ip, int_val_port, ))
-    # Pro_Get_val = Process(target = Get_values, args = (table_name, ))
-    
-    
-    # Pro_Server.start()
-    # Pro_Get_val.start()
-
-
-    # Pro_Server.join()
-    # Pro_Get_val.join()
-
-    # threading.Thread(target = Server, args = (inputValue_ip, int_val_port,)).start()
-    # threading.Thread(target = Get_values, args = (table_name,)).start()
     
 
     log.insert(tkinter.END, " [*] Starting ... \n")    
 
 
-    Server(inputValue_ip, int_val_port, table_name)
+
+    threading.Thread(target = Server, args = (inputValue_ip, int_val_port, table_name, )).start()
 
 
 
-
-
-    plt.show()
-
-
-    s.close()
     
-  
-                
-    # Get_values(table_name)
-
-
-    # cnx.close()
-
-    # plt.show()
+    s.close()
 
 
     # s.close()
+
+
+
     
-    # log.insert(tkinter.END, "\n Ending ...")    
+
 
 
 #-----------------------------------------------------------------------------------------
+
+
+label_frame = customtkinter.CTkFrame(master = app, 
+                                    border_width = 0.5, border_color = '#FFFFFF',
+                                    width= 900)
+
+label_frame.pack(pady=10)
+
 
 entry_ip = customtkinter.CTkEntry(master= label_frame, 
                               width = 400, 
                               height = 40, 
                               placeholder_text="IP Address",
                               border_width = 1, text_color = "silver")
-entry_ip.grid(row = 0, column = 0, padx =10, pady =10)
+entry_ip.grid(row = 0, column = 0, padx = 10, pady = 10)
 
 
 entry_port = customtkinter.CTkEntry(master= label_frame, 
@@ -129,27 +131,43 @@ entry_port = customtkinter.CTkEntry(master= label_frame,
 entry_port.grid(row = 1, column = 0, padx =10, pady = 10)
 
 
-button = customtkinter.CTkButton(app,
+#-----------------------------------------------------------------------------------------
+
+
+button_frame = customtkinter.CTkFrame(master = app)
+button_frame.pack(pady = 0.01)
+
+
+button = customtkinter.CTkButton(button_frame,
                                 corner_radius = 30,
                                 height = 50,
                                 hover_color = "#5837D0",
                                 text_font=('Tahoma', 12),
-                                text="Run Monitoring", command=button_event)
+                                text="Run Monitoring", command = button_event)
 
-button.place(relx=0.5, rely=0.3, anchor=tkinter.CENTER)
+button.grid(row = 2, column = 0, padx = 10, pady = 10)
+
+
+button_graph = customtkinter.CTkButton(button_frame,
+                                corner_radius = 30,
+                                height = 50,
+                                hover_color = "#5837D0",
+                                text_font=('Tahoma', 12),
+                                text="Show Graph", command = Display_graph)
+
+button_graph.grid(row = 2, column = 1, padx = 10, pady = 10)
 
 
 #-----------------------------------------------------------------------------------------
 
 
 text_frame = customtkinter.CTkFrame(master = app)
-text_frame.pack(pady = 40)
+text_frame.pack(pady = 10)
 
  
 log = customtkinter.CTkTextbox(text_frame)
 log.grid(row = 0, column = 0)
 log.configure(width = 850, height = 340, border_width = 1, border_color = '#808080')  
-
 
 
 
@@ -160,10 +178,9 @@ ctk_textbox_scrollbar.grid(row=0, column=1, sticky="ns")
 ctk_textbox_scrollbar.configure(corner_radius = 20)
 
 
+
 # connect textbox scroll event to CTk scrollbar
 log.configure(yscrollcommand=ctk_textbox_scrollbar.set)
-
-
 
 
 
@@ -186,7 +203,8 @@ def Connect_to_mysql():
    
         global cursor
         cursor = cnx.cursor()
-        
+
+
 #-----------------------------------------------------------------------------------------
 """
 Create a database to store the values taken
@@ -197,6 +215,7 @@ def Create_database():
 
     cursor.execute("CREATE DATABASE IF NOT EXISTS {}".format(database_name))
     cursor.execute("USE {}".format(database_name)) 
+
 
 #-----------------------------------------------------------------------------------------
 """
@@ -212,6 +231,7 @@ def Create_table() -> str:
     cursor.execute(sql)
     return table_name
 
+
 #-----------------------------------------------------------------------------------------
 """
 Insert the values into the MySQL database
@@ -222,6 +242,7 @@ def Insert_values(table_name:str, date_and_time:str, int_val_message_status:int)
     % (date_and_time, int_val_message_status))
     
     cnx.commit()
+
 
 #-----------------------------------------------------------------------------------------
 """
@@ -241,6 +262,12 @@ def Visualize_data(int_val_message_status:int, date_and_time:str):
     Values_date_time = np.append(Values_date_time, final_result_date_time)
 
 
+    for x in Values_date_time:
+        print(x)
+    for y in Values_msg:
+        print(y)
+
+
     plt.bar(Values_date_time, Values_msg, label = "Status")
     plt.scatter(Values_date_time, Values_msg)
 
@@ -248,6 +275,7 @@ def Visualize_data(int_val_message_status:int, date_and_time:str):
     plt.title("Status Pacemaker Service")
     plt.xlabel('Date and time')
     plt.ylabel('Status')
+
     
 
 #-----------------------------------------------------------------------------------------
@@ -280,6 +308,7 @@ def Send_email(date_and_time:str):
         server.login(EMAIL_HOST_USER, EMAIL_HOST_PASSWORD)
         server.send_message(msg)
 
+
 #-----------------------------------------------------------------------------------------
 """
 Create a log to review events
@@ -290,6 +319,7 @@ def Create_log(date_and_time:str):
     format = '%(filename)s-%(message)s')
     
     logging.error(f' {date_and_time} [-] Pacemaker service is down !! ')
+
 
 #-----------------------------------------------------------------------------------------
 """
@@ -318,23 +348,12 @@ def Get_values(table_name:str, target:str):
 
                 
                 #Execution of the function of pouring values into MySQL
-                # P1 = Process(target = Insert_values, args = (table_name, date_and_time, int_val_message_status,))
-                # P1.start()
-                # P1.join()
-                
                 threading.Thread(target = Insert_values, args = (table_name, date_and_time, int_val_message_status, )).start()
 
 
                 #Execute function visualize data
-                # P2 = Process(target = Visualize_data, args = (message_status,))
-                # P2.start()
-                # P2.join()
-
                 threading.Thread(target = Visualize_data, args = (int_val_message_status, date_and_time, )).start()
                 
-
-                # Visualize_data(int_val_message_status, date_and_time)
-
 
                 if int_val_message_status == 1:
                 
@@ -343,6 +362,7 @@ def Get_values(table_name:str, target:str):
                 else:
 
                     log.insert(tkinter.END, f"\n [-] Service Is Down :(")
+
 
 
                     #Execute function send mail
@@ -354,20 +374,6 @@ def Get_values(table_name:str, target:str):
 
 
 
-
-                    #Execute function send mail
-                    # P_send_mail = Process(target = Send_email, args = (date_and_time,))
-
-                    #Execute log creation function
-                    # P_create_log = Process(target = Create_log, args = (date_and_time,))
-
-                    # P_send_mail.start()
-                    # P_create_log.start()
-
-                    # P_send_mail.join()
-                    # P_create_log.join()
-
-
                 log.insert(tkinter.END, '\n *****************************************************************')
                 
                 num += 1
@@ -377,17 +383,18 @@ def Get_values(table_name:str, target:str):
                 break
             
 
+
             cnx.close()
             
-            log.insert(tkinter.END, "\nEnding ...")    
+
+
+        log.insert(tkinter.END, "\n \n [*] Done ")
 
 
 
-
-                 
+      
     threading.Thread(target = mainloop).start()
     
-
     
 
 #-----------------------------------------------------------------------------------------
@@ -404,9 +411,11 @@ def Server(inputValue_ip:str, int_val_port:int, table_name:str):
 
 
     try:
+
         def mainloop():     
 
             while True:   
+
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 s.bind((inputValue_ip, int_val_port))
@@ -418,28 +427,37 @@ def Server(inputValue_ip:str, int_val_port:int, table_name:str):
 
                 target, ip = s.accept()
                 log.insert(tkinter.END, "\n [+] Connection Established From: %s" % str(ip))
-                log.insert(tkinter.END, '\n -----------------------------------------------------------------------------------------------')
+                log.insert(tkinter.END, '\n -------------------------------------------------------------------------------------------------')
                 
-                threading.Thread(target = Get_values, args = (table_name, target,)).start()
+                threading.Thread(target = Get_values, args = (table_name, target, )).start()
 
-                
 
+        
 
         threading.Thread(target = mainloop).start()
-
-
+        
+        
 
     except Exception as err:
     
         log.insert(tkinter.END, "[-] I Can Not Listening For Incoming Connections !! :( %s" % str(err))  
+        
         exit()
 
+    
 #-----------------------------------------------------------------------------------------
 
 
 
 
+
+
+
+
+
 app.mainloop()
+
+
 
 
 
