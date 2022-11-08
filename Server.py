@@ -10,6 +10,7 @@ Import libraries
 from termcolor import colored
 from email.message import EmailMessage
 from multiprocessing import Process
+from pylab import plot, show, xlabel, ylabel
 import matplotlib.pyplot as plt
 import numpy as np
 import time as tm
@@ -23,8 +24,6 @@ import smtplib
 import re
 import os
 
-
-from pylab import plot, show, xlabel, ylabel
 
 
 
@@ -51,19 +50,21 @@ app.resizable(False, False)
 #-----------------------------------------------------------------------------------------
 
 
-
-
 def Display_graph():
 
     # window = customtkinter.CTkToplevel()
     # window.geometry("800x500")
     # window.set_appearance_mode("light")
 
+    # saving the figure
+    plt.savefig("status_graph.png")
+
+
+
     plt.show()
 
+
     
-
-
 
 
 
@@ -97,7 +98,7 @@ def button_event():
     s.close()
 
 
-    # s.close()
+    
 
 
 
@@ -262,11 +263,6 @@ def Visualize_data(int_val_message_status:int, date_and_time:str):
     Values_date_time = np.append(Values_date_time, final_result_date_time)
 
 
-    for x in Values_date_time:
-        print(x)
-    for y in Values_msg:
-        print(y)
-
 
     plt.bar(Values_date_time, Values_msg, label = "Status")
     plt.scatter(Values_date_time, Values_msg)
@@ -427,7 +423,7 @@ def Server(inputValue_ip:str, int_val_port:int, table_name:str):
 
                 target, ip = s.accept()
                 log.insert(tkinter.END, "\n [+] Connection Established From: %s" % str(ip))
-                log.insert(tkinter.END, '\n -------------------------------------------------------------------------------------------------')
+                log.insert(tkinter.END, '\n -------------------------------------------------------------------------------------------------\n')
                 
                 threading.Thread(target = Get_values, args = (table_name, target, )).start()
 
