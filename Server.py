@@ -42,9 +42,26 @@ customtkinter.set_default_color_theme("blue")
 
 
 app = customtkinter.CTk()  
-app.geometry("1000x600")
-app.title("Monitoring Status Pacemaker Service")
+app.geometry("1000x650")
+app.title("Monitoring Application")
 app.resizable(False, False)
+
+
+
+
+
+label_title = customtkinter.CTkFrame(master = app, 
+                                    border_width = 0.5, border_color = '#FFFFFF',
+                                    width= 600, height = 40)
+
+label_title.pack(pady = 8)
+
+
+
+
+label = customtkinter.CTkLabel(master=label_title, text="Monitoring Status Pacemaker Service", 
+                                text_font = ('Tahoma', 13))
+label.place(relx=0.5, rely=0.5, anchor=tkinter.CENTER)
 
 
 #-----------------------------------------------------------------------------------------
