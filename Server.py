@@ -42,9 +42,11 @@ customtkinter.set_default_color_theme("blue")
 
 
 app = customtkinter.CTk()  
-app.geometry("1000x650")
+app.geometry("1000x690")
 app.title("Monitoring Application")
 app.resizable(False, False)
+
+
 
 
 
@@ -62,6 +64,44 @@ label_title.pack(pady = 8)
 label = customtkinter.CTkLabel(master=label_title, text="Monitoring Status Pacemaker Service", 
                                 text_font = ('Tahoma', 13))
 label.place(relx=0.5, rely=0.5, anchor=tkinter.CENTER)
+
+
+
+
+
+
+label_themes = customtkinter.CTkFrame(master = app, 
+                                    border_width = 0.5, border_color = '#FFFFFF',
+                                    height = 20)
+
+label_themes.pack(pady = 5)
+
+
+
+def optionmenu_callback(choice):
+    customtkinter.set_appearance_mode(choice)
+
+
+
+combobox = customtkinter.CTkOptionMenu(master = label_themes,
+                                       values = ["dark", "light"],
+                                       command = optionmenu_callback)
+
+
+combobox.pack(padx=20, pady=10, anchor=tkinter.N)
+combobox.set("dark")  
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #-----------------------------------------------------------------------------------------
