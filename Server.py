@@ -26,7 +26,6 @@ import os
 
 
 
-
 #-----------------------------------------------------------------------------------------
 
 
@@ -47,82 +46,65 @@ app.title("Monitoring Application")
 app.resizable(False, False)
 
 
+#-----------------------------------------------------------------------------------------
+"""
+Program title section and theme color change
+"""
+
+frame_title = customtkinter.CTkFrame(master = app, 
+                                    border_width = 1, border_color = '#FFFFFF',
+                                    width= 800, height = 40)
+
+frame_title.pack(pady = 8)
 
 
+lb_title = customtkinter.CTkLabel(master = frame_title, text="Monitoring Status Pacemaker Service", 
+                                text_font = ('Tahoma', 17))
+lb_title.place(relx=0.5, rely=0.5, anchor = tkinter.CENTER)
 
 
-
-label_title = customtkinter.CTkFrame(master = app, 
-                                    border_width = 0.5, border_color = '#FFFFFF',
-                                    width= 600, height = 40)
-
-label_title.pack(pady = 8)
-
-
-
-
-label = customtkinter.CTkLabel(master=label_title, text="Monitoring Status Pacemaker Service", 
-                                text_font = ('Tahoma', 13))
-label.place(relx=0.5, rely=0.5, anchor=tkinter.CENTER)
-
-
-
-
-
-
-label_themes = customtkinter.CTkFrame(master = app, 
+frame_themes = customtkinter.CTkFrame(master = app, 
                                     border_width = 0.5, border_color = '#FFFFFF',
                                     height = 20)
 
-label_themes.pack(pady = 5)
+frame_themes.pack(pady = 5)
 
+
+lb_themes = customtkinter.CTkLabel(master = frame_themes, text="Color Themes : ", 
+                                text_font = ('Tahoma', 10))
+lb_themes.grid(row = 0, column = 0, padx = 10, pady = 10)
 
 
 def optionmenu_callback(choice):
     customtkinter.set_appearance_mode(choice)
 
 
-
-combobox = customtkinter.CTkOptionMenu(master = label_themes,
+combobox = customtkinter.CTkOptionMenu(master = frame_themes,
                                        values = ["dark", "light"],
                                        command = optionmenu_callback)
 
 
-combobox.pack(padx=20, pady=10, anchor=tkinter.N)
+combobox.grid(row = 0, column = 1, padx = 10, pady = 10)
+
 combobox.set("dark")  
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 #-----------------------------------------------------------------------------------------
 
 
-def Display_graph():
+def program_exit():
 
-    # window = customtkinter.CTkToplevel()
-    # window.geometry("800x500")
-    # window.set_appearance_mode("light")
+    app.quit()
+
+
+
+def Display_graph():
 
     # saving the figure
     plt.savefig("status_graph.png")
 
 
-
     plt.show()
-
-
-    
-
 
 
 
@@ -142,49 +124,39 @@ def button_event():
     table_name = Create_table()
 
     
-
     log.insert(tkinter.END, " [*] Starting ... \n")    
 
-
-
+    #
     threading.Thread(target = Server, args = (inputValue_ip, int_val_port, table_name, )).start()
-
-
 
     
     s.close()
 
 
-    
-
-
-
-    
-
-
-
 #-----------------------------------------------------------------------------------------
+"""
+section get ip address and port machine
+"""
 
-
-label_frame = customtkinter.CTkFrame(master = app, 
+frame_ip_and_port = customtkinter.CTkFrame(master = app, 
                                     border_width = 0.5, border_color = '#FFFFFF',
                                     width= 900)
 
-label_frame.pack(pady=10)
+frame_ip_and_port.pack(pady=10)
 
 
-entry_ip = customtkinter.CTkEntry(master= label_frame, 
-                              width = 400, 
+entry_ip = customtkinter.CTkEntry(master = frame_ip_and_port, 
+                              width = 600, 
                               height = 40, 
-                              placeholder_text="IP Address",
+                              placeholder_text = "IP Address",
                               border_width = 1, text_color = "silver")
 entry_ip.grid(row = 0, column = 0, padx = 10, pady = 10)
 
 
-entry_port = customtkinter.CTkEntry(master= label_frame, 
-                              width = 400, 
+entry_port = customtkinter.CTkEntry(master = frame_ip_and_port, 
+                              width = 600, 
                               height = 40, 
-                              placeholder_text="Port",
+                              placeholder_text = "Port",
                               border_width = 1, text_color = "silver")
 entry_port.grid(row = 1, column = 0, padx =10, pady = 10)
 
@@ -196,14 +168,14 @@ button_frame = customtkinter.CTkFrame(master = app)
 button_frame.pack(pady = 0.01)
 
 
-button = customtkinter.CTkButton(button_frame,
+button_monitor = customtkinter.CTkButton(button_frame,
                                 corner_radius = 30,
                                 height = 50,
                                 hover_color = "#5837D0",
                                 text_font=('Tahoma', 12),
                                 text="Run Monitoring", command = button_event)
 
-button.grid(row = 2, column = 0, padx = 10, pady = 10)
+button_monitor.grid(row = 2, column = 0, padx = 10, pady = 10)
 
 
 button_graph = customtkinter.CTkButton(button_frame,
@@ -216,8 +188,21 @@ button_graph = customtkinter.CTkButton(button_frame,
 button_graph.grid(row = 2, column = 1, padx = 10, pady = 10)
 
 
+button_exit = customtkinter.CTkButton(button_frame,
+                                corner_radius = 30,
+                                height = 50,
+                                hover_color = "#5837D0",
+                                text_font=('Tahoma', 12),
+                                text="Quit", command = program_exit)
+
+button_exit.grid(row = 2, column = 2, padx = 10, pady = 10)
+
+
 #-----------------------------------------------------------------------------------------
 
+"""
+Logs display window
+"""
 
 text_frame = customtkinter.CTkFrame(master = app)
 text_frame.pack(pady = 10)
@@ -228,7 +213,6 @@ log.grid(row = 0, column = 0)
 log.configure(width = 850, height = 340, border_width = 1, border_color = '#808080')  
 
 
-
 # create CTk scrollbar
 ctk_textbox_scrollbar = customtkinter.CTkScrollbar(text_frame, command=log.yview)
 ctk_textbox_scrollbar.grid(row=0, column=1, sticky="ns")
@@ -236,10 +220,8 @@ ctk_textbox_scrollbar.grid(row=0, column=1, sticky="ns")
 ctk_textbox_scrollbar.configure(corner_radius = 20)
 
 
-
 # connect textbox scroll event to CTk scrollbar
 log.configure(yscrollcommand=ctk_textbox_scrollbar.set)
-
 
 
 #-----------------------------------------------------------------------------------------
