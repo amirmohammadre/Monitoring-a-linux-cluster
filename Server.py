@@ -90,7 +90,9 @@ combobox.set("dark")
 
 
 #-----------------------------------------------------------------------------------------
-
+"""
+Functions of the buttons
+"""
 
 def program_exit():
 
@@ -126,7 +128,8 @@ def button_event():
     
     log.insert(tkinter.END, " [*] Starting ... \n")    
 
-    #
+
+    #Execute Server function
     threading.Thread(target = Server, args = (inputValue_ip, int_val_port, table_name, )).start()
 
     
@@ -199,7 +202,6 @@ button_exit.grid(row = 2, column = 2, padx = 10, pady = 10)
 
 
 #-----------------------------------------------------------------------------------------
-
 """
 Logs display window
 """

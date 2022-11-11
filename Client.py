@@ -21,7 +21,7 @@ def Shell():
 
 
             #And This command get date and time
-            command_datetime  =  "date +'%Y-%m-%d|%H:%M:%S'"
+            command_datetime  =  "date +'%Y/%m/%d|%H:%M:%S'"
 
             
             
@@ -49,7 +49,7 @@ def Shell():
 
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.connect(("192.168.62.1", 54321))
+sock.connect(("192.168.66.5", 54321))
 
 Shell()
 
