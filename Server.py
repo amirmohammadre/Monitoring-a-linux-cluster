@@ -96,7 +96,7 @@ Functions of the buttons
 
 def program_exit():
 
-    app.quit()
+    app.destroy()
 
 
 
