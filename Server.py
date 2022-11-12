@@ -11,6 +11,7 @@ from termcolor import colored
 from email.message import EmailMessage
 from multiprocessing import Process
 from pylab import plot, show, xlabel, ylabel
+from tkinter import messagebox
 import matplotlib.pyplot as plt
 import numpy as np
 import time as tm
@@ -91,12 +92,14 @@ combobox.set("dark")
 
 #-----------------------------------------------------------------------------------------
 """
-Functions of the buttons
+Functions of the program buttons
 """
 
 def program_exit():
-
-    app.destroy()
+    
+    if messagebox.askquestion("Quit Program", "Do you want to exit ?") == "yes":
+        
+        app.destroy()
 
 
 
@@ -165,7 +168,9 @@ entry_port.grid(row = 1, column = 0, padx =10, pady = 10)
 
 
 #-----------------------------------------------------------------------------------------
-
+"""
+Program buttons section
+"""
 
 button_frame = customtkinter.CTkFrame(master = app)
 button_frame.pack(pady = 0.01)
@@ -230,6 +235,7 @@ log.configure(yscrollcommand=ctk_textbox_scrollbar.set)
 """
 establishing the connection with MySQL Database
 """
+
 def Connect_to_mysql():
 
     try:
@@ -251,6 +257,7 @@ def Connect_to_mysql():
 """
 Create a database to store the values taken
 """
+
 def Create_database():
 
     database_name = "Pacemaker"
@@ -263,6 +270,7 @@ def Create_database():
 """
 Create a table in the database
 """
+
 def Create_table() -> str:  
 
     table_name = "Status"
@@ -278,6 +286,7 @@ def Create_table() -> str:
 """
 Insert the values into the MySQL database
 """
+
 def Insert_values(table_name:str, date_and_time:str, int_val_message_status:int):
 
     cursor.execute("INSERT INTO {} (Date_And_Time, Status) VALUES (\"%s\", \"%s\")".format(table_name) 
@@ -290,6 +299,7 @@ def Insert_values(table_name:str, date_and_time:str, int_val_message_status:int)
 """
 Show service status graphically
 """
+
 def Visualize_data(int_val_message_status:int, date_and_time:str):   
 
     Values_msg = np.array([]) 
@@ -319,6 +329,7 @@ def Visualize_data(int_val_message_status:int, date_and_time:str):
 """
 Send email if the service is interrupted
 """
+
 def Send_email(date_and_time:str):
 
     EMAIL_HOST          = 'smtp.gmail.com'
@@ -350,6 +361,7 @@ def Send_email(date_and_time:str):
 """
 Create a log to review events
 """
+
 def Create_log(date_and_time:str):
  
     logging.basicConfig(filename = 'msg.log', filemode = 'a', 
