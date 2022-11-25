@@ -180,8 +180,8 @@ button_monitor = customtkinter.CTkButton(button_frame,
                                 corner_radius = 30,
                                 height = 50,
                                 hover_color = "#5837D0",
-                                text_font=('Tahoma', 12),
-                                text="Run Monitoring", command = button_event)
+                                text_font = ('Tahoma', 12),
+                                text = "Run Monitoring", command = button_event)
 
 button_monitor.grid(row = 2, column = 0, padx = 10, pady = 10)
 
@@ -190,8 +190,8 @@ button_graph = customtkinter.CTkButton(button_frame,
                                 corner_radius = 30,
                                 height = 50,
                                 hover_color = "#5837D0",
-                                text_font=('Tahoma', 12),
-                                text="Show Graph", command = Display_graph)
+                                text_font = ('Tahoma', 12),
+                                text = "Show Graph", command = Display_graph)
 
 button_graph.grid(row = 2, column = 1, padx = 10, pady = 10)
 
@@ -200,8 +200,8 @@ button_exit = customtkinter.CTkButton(button_frame,
                                 corner_radius = 30,
                                 height = 50,
                                 hover_color = "#5837D0",
-                                text_font=('Tahoma', 12),
-                                text="Quit", command = program_exit)
+                                text_font = ('Tahoma', 12),
+                                text = "Quit", command = program_exit)
 
 button_exit.grid(row = 2, column = 2, padx = 10, pady = 10)
 
@@ -217,7 +217,7 @@ text_frame.pack(pady = 10)
  
 log = customtkinter.CTkTextbox(text_frame)
 log.grid(row = 0, column = 0)
-log.configure(width = 850, height = 340, border_width = 1, border_color = '#808080')  
+log.configure(width = 850, height = 340, border_width = 1, border_color = '#808080', text_font = ('Tahoma', 10))  
 
 
 # create CTk scrollbar
@@ -334,7 +334,7 @@ def Send_email(date_and_time:str):
 
     EMAIL_HOST          = 'smtp.gmail.com'
     EMAIL_HOST_USER     = 'amirmohammadrezvaninia@gmail.com'
-    EMAIL_HOST_PASSWORD = 'mbtzvraxgoamjuof'
+    EMAIL_HOST_PASSWORD = ''           #App passwords
     EMAIL_PORT_SSL      = 465
 
 
