@@ -28,11 +28,19 @@ Additionally, I configured STONITH (Shoot The Other Node in The Head) to prevent
 
 By using Vagrant, I was able to automate the deployment of virtual machines, making it easy to test and refine the cluster configuration in a controlled environment before deploying it in a production setup. This approach ensures that the high-availability cluster is both scalable and resilient, capable of handling node failures while maintaining uninterrupted service delivery.
 
+
 ![image](./img/terminal.png)
 
-The program I wrote and implemented monitors the status of the Pacemaker service using Socket programming. If the service stop working, it sends an email.
+I developed and implemented a program that monitors the status of the Pacemaker service using socket programming. The program continuously checks the service's availability and functionality. If it detects that the Pacemaker service has stopped working or becomes unresponsive, it automatically triggers an alert by sending an email notification.
 
-Service status is received as zero or one values. These values are stored in the MySQL database. And also using the Matplotlib library, its graph is drawn at the end.
+This monitoring mechanism ensures high availability by providing real-time failure detection and prompt notifications, allowing administrators to take immediate action and restore the service before it impacts system operations.
+
+The program receives the Pacemaker service status as binary values: 0 (stopped) or 1 (running). These status values are continuously logged and stored in a MySQL database for historical tracking and analysis.
+
+Additionally, the Matplotlib library is used to generate a graphical representation of the service status over time. This visualization provides a clear and intuitive way to monitor uptime patterns, detect anomalies, and analyze system performance trends.
+
+By integrating real-time monitoring, database logging, and data visualization, this solution ensures effective service tracking and facilitates proactive issue resolution.
+
 
 ![image](./img/graph.png)
 
