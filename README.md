@@ -16,9 +16,17 @@
 
 ## Project description:
 
-I first step provisioned 3 nodes with ubuntu 20.04 OS using Vagrant tool. I then clustered these 3 nodes using Corosync and Pacemaker.
+In the initial step, I provisioned three virtual nodes running Ubuntu 20.04 using Vagrant. Each node was configured with the necessary system dependencies to support high-availability clustering. Once the virtual machines were set up, I configured a high-availability cluster using Corosync for cluster communication and Pacemaker for resource management.
 
-There are two resources in this cluster, the first is an IP address to access the cluster ip and the second is an Apache web server to display the desired website. If for any reason the node containing the resources fails, the resources are automatically transferred to another node.
+The cluster manages two essential resources:
+1. A Virtual IP Address: This floating IP ensures continuous accessibility to the cluster, regardless of which node is currently hosting the resources.
+2. An Apache Web Server: This service is responsible for serving the desired website, ensuring high availability of web content.
+
+To ensure fault tolerance, Corosync is configured to handle node communication and failure detection, while Pacemaker manages automatic failover. If a node hosting the resources fails or becomes unreachable, Pacemaker detects the failure and seamlessly migrates the resources to another healthy node. This failover mechanism minimizes downtime and maintains service availability without requiring manual intervention.
+
+Additionally, I configured STONITH (Shoot The Other Node in The Head) to prevent split-brain scenarios, ensuring that failed nodes do not cause conflicts within the cluster. The resource constraints and failover policies were fine-tuned to optimize load balancing and recovery speed.
+
+By using Vagrant, I was able to automate the deployment of virtual machines, making it easy to test and refine the cluster configuration in a controlled environment before deploying it in a production setup. This approach ensures that the high-availability cluster is both scalable and resilient, capable of handling node failures while maintaining uninterrupted service delivery.
 
 ![image](./img/terminal.png)
 
