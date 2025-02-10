@@ -1,7 +1,7 @@
 
 <div style="text-align: center;">
 
-# A program to monitor a Linux cluster with Python
+# Linux Cluster Monitoring with Python
 
 </div>
 
@@ -88,7 +88,7 @@ python3 Client.py
 
 - Email Address: amirmohammadrezvaninia@gmail.com
 
-- Project Link: [https://github.com/amirmohammadre/monitoring_a_linux_cluster](https://github.com/amirmohammadre/monitoring_a_linux_cluster)
+- Project Link: [https://github.com/amirmohammadre/Monitoring-a-linux-cluster.git](https://github.com/amirmohammadre/Monitoring-a-linux-cluster.git)
 
 ---
 
