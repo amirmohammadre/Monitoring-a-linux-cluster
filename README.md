@@ -50,7 +50,7 @@ By integrating real-time monitoring, database logging, and data visualization, t
 
 1. clone the repository
 ```
-git clone https://github.com/amirmohammadre/monitoring_a_linux_cluster.git
+git clone https://github.com/amirmohammadre/Monitoring-a-linux-cluster.git
 ```
 
 2. cd to directory desired and run this command
